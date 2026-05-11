@@ -2,14 +2,23 @@ FROM composer:2 AS vendor
 
 WORKDIR /app
 
-COPY composer.json composer.lock ./
+COPY . .
 
-RUN composer install \
-    --no-dev \
-    --prefer-dist \
-    --no-interaction \
-    --optimize-autoloader \
-    --no-scripts
+RUN if [ -f composer.lock ]; then \
+        composer install \
+            --no-dev \
+            --prefer-dist \
+            --no-interaction \
+            --optimize-autoloader \
+            --no-scripts; \
+    else \
+        composer install \
+            --no-dev \
+            --prefer-dist \
+            --no-interaction \
+            --optimize-autoloader \
+            --no-scripts; \
+    fi
 
 
 FROM php:8.1-cli-bookworm
@@ -45,4 +54,3 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["php", "-S", "0.0.0.0:8080", "-t", "/var/www/html"]
-
