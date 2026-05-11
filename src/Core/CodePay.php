@@ -410,9 +410,19 @@ class CodePay
      */
     private function getBaseUrl(): string
     {
-        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $configuredBaseUrl = trim((string) ($this->config['public_base_url'] ?? ''));
+        if ($configuredBaseUrl !== '') {
+            return rtrim($configuredBaseUrl, '/');
+        }
+
+        $forwardedProto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME'] ?? '';
+        $protocol = ($forwardedProto === 'https' || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')) ? 'https' : 'http';
+        $host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? 'localhost';
         $port = $_SERVER['SERVER_PORT'] ?? '80';
+
+        if (strpos($host, ':') !== false) {
+            return $protocol . '://' . $host;
+        }
         
         // 如果是标准端口，不需要显示端口号
         if (($protocol === 'https' && $port === '443') || ($protocol === 'http' && $port === '80')) {

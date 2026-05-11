@@ -1,6 +1,11 @@
 <?php
 
 return [
+    // 对外访问地址。留空时自动根据当前请求推断。
+    // 反向代理 / HTTPS 终止场景建议显式填写，例如：
+    // 'public_base_url' => 'https://pay.example.com'
+    'public_base_url' => '',
+
     // 支付宝网关地址
     'server_url' => 'https://openapi.alipay.com',
     

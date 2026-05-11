@@ -264,8 +264,13 @@ try {
                 <div class="qr-code">
                     <p>请使用支付宝扫描下方二维码完成支付</p>
                     <div class="qr-img-wrapper">
-                        <img src="<?php echo htmlspecialchars($result['qr_code_url']); ?>" alt="经营码收款">
+                        <img
+                            src="<?php echo htmlspecialchars($result['qr_code_url']); ?>"
+                            alt="经营码收款"
+                            onerror="handleQrImageError(this)"
+                        >
                     </div>
+                    <p class="qr-error-tip" id="qrErrorTip" style="display:none;">二维码加载失败，请检查经营码图片是否已正确上传。</p>
                 </div>
                 <div class="payment-tips">
                     <h4>支付提示</h4>
@@ -300,6 +305,14 @@ try {
 
         <script>
             let countdownInterval;
+
+            function handleQrImageError(img) {
+                img.style.display = 'none';
+                const tip = document.getElementById('qrErrorTip');
+                if (tip) {
+                    tip.style.display = 'block';
+                }
+            }
             
             function startCountdown(duration) {
                 let timer = duration, minutes, seconds;
