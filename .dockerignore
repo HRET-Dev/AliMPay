@@ -1,0 +1,17 @@
+.git
+.gitignore
+.idea
+.vscode
+vendor
+data
+logs
+config/alipay.php
+config/codepay.json
+docker-compose.override.yml
+Dockerfile*
+README.assets
+*.log
+*.sqlite
+*.db
+monitor_status_fallback.txt
+

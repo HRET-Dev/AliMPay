@@ -20,6 +20,52 @@
 - Composer
 - 支付宝开放平台应用
 
+### Docker 部署
+
+如果你不想在宿主机安装 PHP、Composer 和扩展，可以直接用 Docker：
+
+```bash
+# 首次启动
+docker compose up -d --build
+
+# 查看运行状态
+docker compose ps
+
+# 查看日志
+docker compose logs -f
+```
+
+启动后访问：
+
+- `http://localhost:8080/health.php`
+- `http://localhost:8080/submit.php`
+
+容器会自动：
+
+- 安装 Composer 依赖
+- 创建运行目录 `config`、`data`、`logs`、`qrcode`
+- 如果 `config/alipay.php` 不存在，则自动从 `config/alipay.example.php` 复制一份
+
+持久化目录如下，重建容器不会丢失：
+
+- `./config`
+- `./data`
+- `./logs`
+- `./qrcode`
+
+常用命令：
+
+```bash
+# 停止服务
+docker compose down
+
+# 重新构建并启动
+docker compose up -d --build
+
+# 进入容器
+docker compose exec alimpay sh
+```
+
 ### 2. 安装步骤
 
 ```bash
@@ -178,6 +224,9 @@ GET /api.php?act=query&pid=商户ID&key=商户密钥
 ```bash
 # 检查系统状态
 curl http://domain/health.php
+
+# Docker 本地环境
+curl http://localhost:8080/health.php?action=status
 ```
 
 ### 日志查看
