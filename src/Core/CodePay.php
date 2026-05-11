@@ -152,14 +152,22 @@ class CodePay
 
         $sign = $params['sign'];
         
-        // Remove sign and sign_type from params
-        unset($params['sign'], $params['sign_type']);
+        // Remove signature fields and transport-only control params before signing.
+        unset(
+            $params['sign'],
+            $params['sign_type'],
+            $params['act'],
+            $params['action'],
+            $params['format'],
+            $params['payment_result']
+        );
         
         // Generate sign string according to CodePay protocol
         $signStr = $this->generateSignString($params);
         $expectedSign = md5($signStr . $this->merchantKey);
         
         $this->logger->debug('Validating signature according to CodePay protocol.', [
+            'keys' => array_keys($params),
             'string_to_sign' => $signStr,
             'expected_sign' => $expectedSign,
             'received_sign' => $sign

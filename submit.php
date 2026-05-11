@@ -10,19 +10,8 @@ $logger = Logger::getInstance();
 try {
     // 兼容POST和GET请求
     $requestData = !empty($_POST) ? $_POST : $_GET;
-
-    $params = [
-        'pid' => $requestData['pid'] ?? '',
-        'type' => $requestData['type'] ?? '',
-        'out_trade_no' => $requestData['out_trade_no'] ?? '',
-        'notify_url' => $requestData['notify_url'] ?? '',
-        'return_url' => $requestData['return_url'] ?? '',
-        'name' => $requestData['name'] ?? '',
-        'money' => $requestData['money'] ?? '',
-        'sitename' => $requestData['sitename'] ?? '',
-        'sign' => $requestData['sign'] ?? '',
-        'sign_type' => $requestData['sign_type'] ?? 'MD5'
-    ];
+    $params = $requestData;
+    $params['sign_type'] = $params['sign_type'] ?? 'MD5';
     
     // 如果是直接从api.php重定向而来，参数可能在POST中
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($requestData['payment_result'])) {

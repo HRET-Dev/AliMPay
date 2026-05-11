@@ -21,18 +21,8 @@ try {
     $logger = Logger::getInstance();
     
     // Get payment parameters according to CodePay protocol
-    $params = [
-        'pid' => $_GET['pid'] ?? $_POST['pid'] ?? '',
-        'type' => $_GET['type'] ?? $_POST['type'] ?? '',
-        'out_trade_no' => $_GET['out_trade_no'] ?? $_POST['out_trade_no'] ?? '',
-        'notify_url' => $_GET['notify_url'] ?? $_POST['notify_url'] ?? '',
-        'return_url' => $_GET['return_url'] ?? $_POST['return_url'] ?? '',
-        'name' => $_GET['name'] ?? $_POST['name'] ?? '',
-        'money' => $_GET['money'] ?? $_POST['money'] ?? '',
-        'sitename' => $_GET['sitename'] ?? $_POST['sitename'] ?? '',
-        'sign' => $_GET['sign'] ?? $_POST['sign'] ?? '',
-        'sign_type' => $_GET['sign_type'] ?? $_POST['sign_type'] ?? 'MD5'
-    ];
+    $params = array_merge($_GET, $_POST);
+    $params['sign_type'] = $params['sign_type'] ?? 'MD5';
     
     $logger->info('CodePay Payment Request', [
         'params' => array_merge($params, ['sign' => '***']), // Hide signature in logs

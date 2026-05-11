@@ -659,18 +659,8 @@ try {
     $outputFormat = $_GET['format'] ?? $_POST['format'] ?? 'html';
 
     if ($isPaymentRequest && $outputFormat !== 'json') {
-        $params = [
-            'pid' => $_POST['pid'] ?? '',
-            'type' => $_POST['type'] ?? '',
-            'out_trade_no' => $_POST['out_trade_no'] ?? '',
-            'notify_url' => $_POST['notify_url'] ?? '',
-            'return_url' => $_POST['return_url'] ?? '',
-            'name' => $_POST['name'] ?? '',
-            'money' => $_POST['money'] ?? '',
-            'sitename' => $_POST['sitename'] ?? '',
-            'sign' => $_POST['sign'] ?? '',
-            'sign_type' => $_POST['sign_type'] ?? 'MD5'
-        ];
+        $params = array_merge($_GET, $_POST);
+        $params['sign_type'] = $params['sign_type'] ?? 'MD5';
         
         $paymentResult = $codePay->createPayment($params);
         redirectToSubmitPage($paymentResult);
@@ -748,18 +738,8 @@ try {
         case 'submit':
         case 'create':
             // Create payment request - CodePay protocol
-            $params = [
-                'pid' => $_POST['pid'] ?? '',
-                'type' => $_POST['type'] ?? '',
-                'out_trade_no' => $_POST['out_trade_no'] ?? '',
-                'notify_url' => $_POST['notify_url'] ?? '',
-                'return_url' => $_POST['return_url'] ?? '',
-                'name' => $_POST['name'] ?? '',
-                'money' => $_POST['money'] ?? '',
-                'sitename' => $_POST['sitename'] ?? '',
-                'sign' => $_POST['sign'] ?? '',
-                'sign_type' => $_POST['sign_type'] ?? 'MD5'
-            ];
+            $params = array_merge($_GET, $_POST);
+            $params['sign_type'] = $params['sign_type'] ?? 'MD5';
             
             $result = $codePay->createPayment($params);
             break;
