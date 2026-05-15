@@ -154,6 +154,7 @@ cat config/codepay.json
 'payment' => [
     'business_qr_mode' => [
         'enabled' => true,  // 启用经营码模式
+        'default_qr_code_url' => 'https://example.com/business_qr.png', // 本地图片不可用时的远程兜底二维码
     ]
 ]
 ```

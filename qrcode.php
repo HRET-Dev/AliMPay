@@ -28,6 +28,24 @@ SVG;
     exit;
 }
 
+/**
+ * 本地经营码不可用时跳转到远程默认二维码。
+ */
+function redirectToDefaultQrCode(array $config): void
+{
+    $defaultQrCodeUrl = trim($config['payment']['business_qr_mode']['default_qr_code_url'] ?? '');
+    if ($defaultQrCodeUrl === '') {
+        return;
+    }
+
+    if (!filter_var($defaultQrCodeUrl, FILTER_VALIDATE_URL)) {
+        outputErrorImage('默认二维码URL配置无效', 500);
+    }
+
+    header('Location: ' . $defaultQrCodeUrl, true, 302);
+    exit;
+}
+
 header('Cache-Control: public, max-age=3600'); // 缓存1小时
 
 // 加载配置
@@ -48,28 +66,33 @@ try {
         case 'business':
             // 经营码二维码
             $qrCodePath = $config['payment']['business_qr_mode']['qr_code_path'];
-            
+
             if (!file_exists($qrCodePath)) {
+                redirectToDefaultQrCode($config);
                 outputErrorImage('经营码文件不存在', 404);
             }
 
             if (!is_readable($qrCodePath)) {
+                redirectToDefaultQrCode($config);
                 outputErrorImage('经营码文件不可读', 500);
             }
 
             if (filesize($qrCodePath) === 0) {
+                redirectToDefaultQrCode($config);
                 outputErrorImage('经营码文件为空', 500);
             }
 
             // 读取并输出二维码文件
             $imageData = file_get_contents($qrCodePath);
             if ($imageData === false || $imageData === '') {
+                redirectToDefaultQrCode($config);
                 outputErrorImage('经营码文件读取失败', 500);
             }
 
             // 根据文件类型设置正确的Content-Type
             $imageInfo = getimagesizefromstring($imageData);
             if (!$imageInfo || empty($imageInfo['mime'])) {
+                redirectToDefaultQrCode($config);
                 outputErrorImage('经营码文件不是有效图片', 500);
             }
 

@@ -266,6 +266,7 @@ try {
                     <div class="qr-img-wrapper">
                         <img
                             src="<?php echo htmlspecialchars($result['qr_code_url']); ?>"
+                            data-fallback-src="<?php echo htmlspecialchars($result['default_qr_code_url'] ?? ''); ?>"
                             alt="经营码收款"
                             onerror="handleQrImageError(this)"
                         >
@@ -307,6 +308,12 @@ try {
             let countdownInterval;
 
             function handleQrImageError(img) {
+                const fallbackSrc = img.dataset.fallbackSrc;
+                if (fallbackSrc && img.src !== fallbackSrc) {
+                    img.src = fallbackSrc;
+                    return;
+                }
+
                 img.style.display = 'none';
                 const tip = document.getElementById('qrErrorTip');
                 if (tip) {

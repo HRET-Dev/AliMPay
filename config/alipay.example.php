@@ -59,6 +59,7 @@ return [
         'business_qr_mode' => [
             'enabled' => true,      // 是否启用经营码收款模式
             'qr_code_path' => __DIR__ . '/../qrcode/business_qr.png',  // 经营码二维码路径
+            'default_qr_code_url' => '', // 本地经营码图片无法加载时使用的远程二维码URL
             'amount_offset' => 0.01, // 金额偏移量，用于区分相同金额的订单
             'match_tolerance' => 300, // 订单匹配时间容差（秒）- 账单时间必须在订单创建后5分钟内
             'payment_timeout' => 300, // 客户付款超时时间（秒）- 客户可以在5分钟内完成付款

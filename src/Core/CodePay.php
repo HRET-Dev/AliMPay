@@ -314,10 +314,16 @@ class CodePay
             // 根据收款模式生成不同的支付二维码
             if ($businessQrMode) {
                 // 经营码收款模式：使用上传的经营码二维码
-                $qrCodePath = $this->config['payment']['business_qr_mode']['qr_code_path'];
+                $businessQrConfig = $this->config['payment']['business_qr_mode'];
+                $qrCodePath = $businessQrConfig['qr_code_path'];
+                $defaultQrCodeUrl = trim($businessQrConfig['default_qr_code_url'] ?? '');
                 
-                if (!file_exists($qrCodePath)) {
+                if (!file_exists($qrCodePath) && $defaultQrCodeUrl === '') {
                     throw new \Exception('经营码二维码文件不存在，请先上传经营码到: ' . $qrCodePath);
+                }
+
+                if ($defaultQrCodeUrl !== '' && !filter_var($defaultQrCodeUrl, FILTER_VALIDATE_URL)) {
+                    throw new \Exception('默认经营码二维码URL配置无效: ' . $defaultQrCodeUrl);
                 }
                 
                 // 生成二维码访问URL
@@ -332,7 +338,8 @@ class CodePay
                     'trade_no' => $tradeNo,
                     'payment_amount' => $paymentAmount,
                     'qr_code_path' => $qrCodePath,
-                    'qr_code_url' => $qrCodeUrl
+                    'qr_code_url' => $qrCodeUrl,
+                    'default_qr_code_url' => $defaultQrCodeUrl
                 ]);
             } else {
                 // 传统转账模式：动态生成转账二维码
@@ -368,6 +375,9 @@ class CodePay
             // 根据收款模式添加二维码字段
             if ($businessQrMode) {
                 $response['qr_code_url'] = $qrCodeUrl;  // 经营码模式使用URL
+                if (!empty($defaultQrCodeUrl)) {
+                    $response['default_qr_code_url'] = $defaultQrCodeUrl;
+                }
             } else {
                 $response['qr_code'] = $qrCodeBase64;   // 传统模式使用base64
             }
